@@ -1,3 +1,9 @@
+
+SELECT customer_name, city, COUNT(*)
+FROM orders_flat
+GROUP BY customer_name, city;
+
+
 Anomaly Analysis
 Insert Anomaly
 In the orders_flat table, product information and order information are stored together. If the company wants to add a new product but no customer has ordered it yet, it cannot be inserted because order details such as order_id and customer_id are required.
