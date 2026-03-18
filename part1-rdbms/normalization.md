@@ -1,15 +1,22 @@
+## Anomaly Analysis
 
-SELECT customer_name, city, COUNT(*)
-FROM orders_flat
-GROUP BY customer_name, city;
+### Insert Anomaly
+In the `orders_flat.csv`, it is not possible to insert a new product or customer without creating an order entry. For example, if a new product (e.g., Product_ID: P106, Product_Name: Tablet) needs to be added but no order has been placed yet, there is no place to store it independently. This shows an **insert anomaly**, as product data depends on order data.
 
+### Update Anomaly
+Customer details such as `customer_name` and `city` are repeated across multiple rows. For instance, if "Rahul Sharma" from "Mumbai" appears in multiple records and his city changes to "Pune", all rows must be updated. If even one row is missed, it leads to inconsistent data. This is an **update anomaly** caused by redundancy.
 
-Anomaly Analysis
-Insert Anomaly
-In the orders_flat table, product information and order information are stored together. If the company wants to add a new product but no customer has ordered it yet, it cannot be inserted because order details such as order_id and customer_id are required.
+### Delete Anomaly
+If a particular order is deleted, important information may be lost. For example, deleting the only order containing Product_ID: P105 may also remove all details of that product from the dataset. This results in a **delete anomaly**, where deleting one record unintentionally removes other valuable information.
 
-Update Anomaly
-Customer information such as city appears multiple times for every order placed by that customer. If the customer changes city, every row must be updated. If one row is missed, the database will contain inconsistent information.
+---
 
-Delete Anomaly
-If the last order containing a particular product is deleted, the product information will also be removed from the table even though the product still exists. This results in loss of important product data.
+## Normalization Justification
+
+While keeping all data in a single table may appear simple, it leads to redundancy and data inconsistency. In the `orders_flat.csv`, customer details like `customer_name` and `city` are repeated across multiple rows whenever the same customer places multiple orders. This duplication increases storage and creates maintenance issues.
+
+For instance, if a customer’s city needs to be updated, it must be modified in every related row. Missing even one update results in an **update anomaly**, causing inconsistent data. Similarly, adding a new product without an associated order is not possible, leading to an **insert anomaly**. Deleting an order may also remove important information about a customer or product, resulting in a **delete anomaly**.
+
+Normalization to Third Normal Form (3NF) resolves these issues by separating data into logical tables such as Customers, Orders, Products, and Sales Representatives. Each table contains only relevant attributes, and relationships are maintained using primary and foreign keys. This eliminates redundancy and ensures data integrity.
+
+Although normalization introduces multiple tables, it improves consistency, scalability, and ease of maintenance. Therefore, normalization is not over-engineering but a necessary design approach for building reliable and efficient database systems.
